@@ -16,7 +16,7 @@ public class Dice {
     }
 
     // Return probability of getting a success
-    public double getTotalSuccessProbability() {
+    public double getSuccessProbability() {
         double totalProbability = 0;
         for (Face face: successfulFaces) {
             totalProbability += face.probability;
