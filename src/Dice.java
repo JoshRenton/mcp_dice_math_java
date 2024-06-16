@@ -11,8 +11,8 @@ public class Dice {
         this.successfulFaces = successfulFaces;
     }
 
-    public double getFaceProbability(Face face) {
-        return face.probability;
+    public double getCritProbability() {
+        return Face.CRIT.probability;
     }
 
     // Return probability of getting a success
@@ -24,7 +24,7 @@ public class Dice {
         return totalProbability;
     }
 
-    public enum Face {
+    private enum Face {
         BLANK(0.25),
         HIT(0.25),
         BLOCK(0.125),

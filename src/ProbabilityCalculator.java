@@ -1,10 +1,12 @@
 import java.util.Arrays;
+import java.util.stream.DoubleStream;
 
 public class ProbabilityCalculator {
     // Should never create an instance of this class
     public static void main(String[] args) {
         Dice dice = new Dice();
-        double[] cumulativeProbabilities = greaterThanProbabilities(dice, 10);
+        double[] cumulativeProbabilities = greaterThanProbabilities(dice, 5);
+        System.out.println(DoubleStream.of(cumulativeProbabilities).sum());
         System.out.println(Arrays.toString(cumulativeProbabilities));
     }
 
@@ -33,14 +35,33 @@ public class ProbabilityCalculator {
                 * Math.pow(failProbability, n - k);
     }
 
+    static double probabilityOfRCritsGivenKSuccesses(Dice dice, int n, int k) {
+        double critProbability = dice.getCritProbability();
+        double noCritProbability = 1 - critProbability;
+
+        return binomialCoefficient(n, k) * Math.pow(critProbability, k)
+                * Math.pow(noCritProbability, n - k);
+    }
+
     // Probabilities of getting >= k successes for each 0 <= k <= n
     static double[] greaterThanProbabilities(Dice dice, int n) {
-        double[] cumulativeProbabilities = new double[n + 1];
-        double total = 0.0;
+        double[] probabilities = new double[2 * n + 1];
 
         for (int k = 0; k <= n; k++) {
-            total += probabilityOfKSuccessesRollingNDice(dice, n, k);
-            cumulativeProbabilities[n - k] = total;
+            double initial = probabilityOfKSuccessesRollingNDice(dice, n, k);
+            for (int r = 0; r <= k; r++) {
+                double crit = probabilityOfRCritsGivenKSuccesses(dice, k, r);
+                for (int q = 0; q <= r; q++) {
+                    double critSuccess = probabilityOfKSuccessesRollingNDice(dice, r, q);
+                    probabilities[k + q] += initial * crit * critSuccess;
+                }
+            }
+        }
+
+        double[] cumulativeProbabilities = probabilities;
+
+        for (int i = 2 * n - 1; i >= 0; i--) {
+            cumulativeProbabilities[i] += cumulativeProbabilities[i + 1];
         }
 
         return cumulativeProbabilities;
