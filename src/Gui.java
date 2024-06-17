@@ -81,8 +81,14 @@ public class Gui {
 
         for (int i = 0; i < results.length; i++) {
             String percent = df.format(results[i] * 100);
-            if (percent.equals("0")) {
+
+            if (i == 0) {
+                model.addRow(new Object[]{i, percent + "%"});
+            }
+            else if (percent.equals("0")) {
                 model.addRow(new Object[]{i + "+", "A gamble for the history books."});
+                // Stop displaying results after the chance is basically 0
+                break;
             } else {
                 model.addRow(new Object[]{i + "+", percent + "%"});
             }

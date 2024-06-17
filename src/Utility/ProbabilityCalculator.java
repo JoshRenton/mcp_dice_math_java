@@ -8,7 +8,9 @@ public final class ProbabilityCalculator {
         double[] atkProba = successProbabilities(atkDie, numAtkDice);
         double[] defProba = successProbabilities(defDie, numDefDice);
         double[] dmgProba = dmgProbabilities(atkProba, defProba);
-        return greaterThanProbabilities(dmgProba);
+        double[] gtProba = greaterThanProbabilities(dmgProba);
+        gtProba[0] = dmgProba[0];
+        return gtProba;
     }
 
     private static int binomialCoefficient(int n, int k) {
