@@ -1,13 +1,9 @@
-import java.util.Arrays;
-import java.util.stream.DoubleStream;
+import Dice.*;
 
 public class ProbabilityCalculator {
-    // Should never create an instance of this class
     public static void main(String[] args) {
-        Dice dice = new Dice();
-        double[] cumulativeProbabilities = greaterThanProbabilities(dice, 5);
-        System.out.println(DoubleStream.of(cumulativeProbabilities).sum());
-        System.out.println(Arrays.toString(cumulativeProbabilities));
+        DiceBuilder diceBuilder = new DiceBuilder();
+        Dice dice = diceBuilder.defaultAttackDice().build();
     }
 
     static int binomialCoefficient(int n, int k) {
@@ -58,12 +54,10 @@ public class ProbabilityCalculator {
             }
         }
 
-        double[] cumulativeProbabilities = probabilities;
-
         for (int i = 2 * n - 1; i >= 0; i--) {
-            cumulativeProbabilities[i] += cumulativeProbabilities[i + 1];
+            probabilities[i] += probabilities[i + 1];
         }
 
-        return cumulativeProbabilities;
+        return probabilities;
     }
 }

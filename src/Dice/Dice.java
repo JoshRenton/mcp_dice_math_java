@@ -1,18 +1,29 @@
-public class Dice {
-    private Face[] successfulFaces;
+package Dice;
 
-    // Default constructor
-    public Dice() {
-        successfulFaces = new Face[]{Face.HIT, Face.WILD, Face.CRIT};
-    }
+import java.util.ArrayList;
+
+public class Dice {
+    private ArrayList<Face> successfulFaces;
 
     // Used to specify custom successful faces
-    public Dice(Face[] successfulFaces) {
+    protected Dice(ArrayList<Face> successfulFaces) {
         this.successfulFaces = successfulFaces;
     }
 
     public double getCritProbability() {
         return Face.CRIT.probability;
+    }
+
+    public void setSuccessfulFaces(ArrayList<Face> successfulFaces) {
+        this.successfulFaces = successfulFaces;
+    }
+
+    public void addSuccessfulFace(Face face) {
+        if (successfulFaces.contains(face)) {
+            return;
+        }
+
+        this.successfulFaces.add(face);
     }
 
     // Return probability of getting a success
@@ -24,7 +35,7 @@ public class Dice {
         return totalProbability;
     }
 
-    private enum Face {
+    protected enum Face {
         BLANK(0.25),
         HIT(0.25),
         BLOCK(0.125),
@@ -32,7 +43,7 @@ public class Dice {
         CRIT(0.125),
         FAIL(0.125);
 
-        public final double probability;
+        private final double probability;
 
         Face(double probability) {
             this.probability = probability;
