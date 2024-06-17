@@ -62,6 +62,7 @@ public class Gui {
         String[] headers = new String[]{"Number of Hits", "Percent Chance"};
         DefaultTableModel model = new DefaultTableModel(headers, 2);
         outputTable = new JTable(model);
+        outputTable.setDefaultEditor(Object.class, null);
         JScrollPane pane = new JScrollPane(outputTable);
         addComponentToLayout(pane, guiFrame, gbl, gbc, 1, 0, 1, 2);
 
