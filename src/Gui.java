@@ -1,6 +1,7 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.stream.IntStream;
 
@@ -17,10 +18,10 @@ public class Gui {
         guiFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         guiFrame.setLocationRelativeTo(null);
 
-        int[] diceNums = IntStream.range(0, 15).toArray();
-        Integer[] diceNumsInt = new Integer[diceNums.length];
-        for (int num = 0; num < diceNums.length; num++) {
-            diceNumsInt[num] = diceNums[num];
+        int[] diceNumbers = IntStream.range(0, 15).toArray();
+        Integer[] diceNumbersInt = new Integer[diceNumbers.length];
+        for (int num = 0; num < diceNumbers.length; num++) {
+            diceNumbersInt[num] = diceNumbers[num];
         }
 
         GridBagLayout gbl = new GridBagLayout();
@@ -29,35 +30,18 @@ public class Gui {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
 
-        // Centers text in dropdown
-        DefaultListCellRenderer lcr = new DefaultListCellRenderer();
-        lcr.setHorizontalAlignment(DefaultListCellRenderer.HORIZONTAL);
+        JPanel atkPanel = createDiceOptionPanel(diceNumbersInt, new Runner.AtkListener(),
+                "Attack", Color.RED);
+        JPanel defPanel = createDiceOptionPanel(diceNumbersInt, new Runner.DefListener(),
+                "Defense", Color.BLUE);
 
-        JComboBox<Integer> atkDiceNumBox = new JComboBox<>(diceNumsInt);
-        atkDiceNumBox.setRenderer(lcr);
-        JComboBox<Integer> defDiceNumBox = new JComboBox<>(diceNumsInt);
-        defDiceNumBox.setRenderer(lcr);
-        atkDiceNumBox.addActionListener(new Runner.AtkListener());
-        defDiceNumBox.addActionListener(new Runner.DefListener());
+        JPanel sidePanel = new JPanel();
+        BoxLayout bl = new BoxLayout(sidePanel, BoxLayout.Y_AXIS);
+        sidePanel.setLayout(bl);
+        sidePanel.add(atkPanel);
+        sidePanel.add(defPanel);
 
-        JLabel atkLabel = new JLabel("<html><div style='text-align: center;'> Number of <br> " +
-                "Attack Dice");
-        atkLabel.setForeground(Color.RED);
-        atkLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JLabel defLabel = new JLabel("<html><div style='text-align: center;'> Number of <br> " +
-                "Defense Dice");
-        defLabel.setForeground(Color.BLUE);
-        defLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JPanel dicePanel = new JPanel();
-        BoxLayout bl = new BoxLayout(dicePanel, BoxLayout.Y_AXIS);
-        dicePanel.setLayout(bl);
-        dicePanel.add(atkLabel);
-        dicePanel.add(atkDiceNumBox);
-        dicePanel.add(defLabel);
-        dicePanel.add(defDiceNumBox);
-
-        addComponentToLayout(dicePanel, guiFrame, gbl, gbc, 0, 0, 1, 1);
+        addComponentToLayout(sidePanel, guiFrame, gbl, gbc, 0, 0, 1, 1);
 
         String[] headers = new String[]{"Number of Hits", "Percent Chance"};
         DefaultTableModel model = new DefaultTableModel(headers, 2);
@@ -69,6 +53,32 @@ public class Gui {
         guiFrame.pack();
     }
 
+    private JPanel createDiceOptionPanel(Integer[] diceNumbers, ActionListener listener, String diceSide,
+                                         Color textColor) {
+        JPanel panel = new JPanel();
+
+        // Centers text in dropdown
+        DefaultListCellRenderer lcr = new DefaultListCellRenderer();
+        lcr.setHorizontalAlignment(DefaultListCellRenderer.HORIZONTAL);
+
+        JComboBox<Integer> diceNumBox = new JComboBox<>(diceNumbers);
+        diceNumBox.setRenderer(lcr);
+
+        diceNumBox.addActionListener(listener);
+
+        JLabel label = new JLabel("<html><div style='text-align: center;'> Number of <br> " +
+                 diceSide + " Dice");
+        label.setForeground(textColor);
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        BoxLayout bl = new BoxLayout(panel, BoxLayout.Y_AXIS);
+        panel.setLayout(bl);
+        panel.add(label);
+        panel.add(diceNumBox);
+
+        return panel;
+    }
+
     public void showGui() {
         guiFrame.setVisible(true);
     }
@@ -78,20 +88,20 @@ public class Gui {
         // Clear table
         model.setRowCount(0);
 
-        DecimalFormat df = new DecimalFormat("#.##");
+        DecimalFormat df = new DecimalFormat("0.00");
 
         for (int i = 0; i < results.length; i++) {
             String percent = df.format(results[i] * 100);
 
             if (i == 0) {
-                model.addRow(new Object[]{i, percent + "%"});
+                model.addRow(new Object[]{i, percent});
             }
-            else if (percent.equals("0")) {
-                model.addRow(new Object[]{i + "+", "A gamble for the history books."});
+            else if (percent.equals("0.00")) {
+                model.addRow(new Object[]{i + "+", "Domino would be pushing her luck."});
                 // Stop displaying results after the chance is basically 0
                 break;
             } else {
-                model.addRow(new Object[]{i + "+", percent + "%"});
+                model.addRow(new Object[]{i + "+", percent});
             }
         }
     }
@@ -103,8 +113,16 @@ public class Gui {
         gbc.gridy = gridy;
         gbc.gridheight = gridheight;
         gbc.gridwidth = gridwidth;
+        gbc.ipady = 25;
 
         gbl.setConstraints(component, gbc);
         container.add(component);
     }
-}
+
+    public void createModifyDiceWindow() {
+        JFrame modify = new JFrame("Modify Dice");
+        modify.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        modify.pack();
+        modify.setVisible(true);
+    }
+ }

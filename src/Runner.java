@@ -47,4 +47,11 @@ public class Runner {
             gui.displayResults(results);
         }
     }
+
+    public static class ModifyDiceListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            gui.createModifyDiceWindow();
+        }
+    }
 }
