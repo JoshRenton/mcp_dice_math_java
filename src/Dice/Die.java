@@ -26,6 +26,16 @@ public class Die {
         this.successfulFaces.add(face);
     }
 
+    // Set a successful face to unsuccessful and vice-versa
+    public void toggleSuccessfulFace(String faceName) {
+        Face face = stringToFace(faceName);
+
+        boolean inList = successfulFaces.remove(face);
+        if (!inList) {
+            successfulFaces.add(face);
+        }
+    }
+
     // Return probability of getting a success
     public double getSuccessProbability() {
         double totalProbability = 0.0;
@@ -35,7 +45,33 @@ public class Die {
         return totalProbability;
     }
 
-    protected enum Face {
+    private Face stringToFace(String faceName) {
+        switch (faceName) {
+            case ("Blank") -> {
+                return Face.BLANK;
+            }
+            case ("Hit") -> {
+                return Face.HIT;
+            }
+            case ("Block") -> {
+                return Face.BLOCK;
+            }
+            case ("Wild") -> {
+                return Face.WILD;
+            }
+            case ("Crit") -> {
+                return Face.CRIT;
+            }
+            case ("Fail") -> {
+                return Face.FAIL;
+            }
+            default -> {
+                throw new RuntimeException("Face name is invalid");
+            }
+        }
+    }
+
+    private enum Face {
         BLANK(0.25),
         HIT(0.25),
         BLOCK(0.125),

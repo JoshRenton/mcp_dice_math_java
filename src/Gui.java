@@ -1,8 +1,10 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 public class Gui {
@@ -35,13 +37,23 @@ public class Gui {
         JPanel defPanel = createDiceOptionPanel(diceNumbersInt, new Runner.DefListener(),
                 "Defense", Color.BLUE);
 
-        JPanel sidePanel = new JPanel();
-        BoxLayout bl = new BoxLayout(sidePanel, BoxLayout.Y_AXIS);
-        sidePanel.setLayout(bl);
-        sidePanel.add(atkPanel);
-        sidePanel.add(defPanel);
+        JPanel atkFacePanel = createDiceFaceOptionsPanel("atk");
+        JPanel defFacePanel = createDiceFaceOptionsPanel("def");
 
-        addComponentToLayout(sidePanel, guiFrame, gbl, gbc, 0, 0, 1, 1);
+        JPanel leftPanel = new JPanel();
+        BoxLayout blLeft = new BoxLayout(leftPanel, BoxLayout.Y_AXIS);
+        leftPanel.setLayout(blLeft);
+        leftPanel.add(atkPanel);
+        leftPanel.add(atkFacePanel);
+
+        JPanel rightPanel = new JPanel();
+        BoxLayout blRight = new BoxLayout(rightPanel, BoxLayout.Y_AXIS);
+        rightPanel.setLayout(blRight);
+        rightPanel.add(defPanel);
+        rightPanel.add(defFacePanel);
+
+        addComponentToLayout(leftPanel, guiFrame, gbl, gbc, 0, 0, 1, 1);
+        addComponentToLayout(rightPanel, guiFrame, gbl, gbc, 2, 0, 1, 1);
 
         String[] headers = new String[]{"Number of Hits", "Percent Chance"};
         DefaultTableModel model = new DefaultTableModel(headers, 2);
@@ -75,6 +87,52 @@ public class Gui {
         panel.setLayout(bl);
         panel.add(label);
         panel.add(diceNumBox);
+
+        return panel;
+    }
+
+    private JPanel createDiceFaceOptionsPanel(String prefix) {
+        JPanel panel = new JPanel();
+        BoxLayout bl = new BoxLayout(panel, BoxLayout.Y_AXIS);
+        panel.setLayout(bl);
+
+        JCheckBox cbHit;
+        if (Objects.equals(prefix, "atk")) {
+            cbHit = new JCheckBox("Hit", true);
+        } else {
+            cbHit = new JCheckBox("Hit");
+        }
+        cbHit.setName(prefix + "Hit");
+        cbHit.addActionListener(new FaceListener());
+
+        JCheckBox cbBlock;
+        if (Objects.equals(prefix, "def")) {
+            cbBlock = new JCheckBox("Block", true);
+        } else {
+            cbBlock = new JCheckBox("Block");
+        }
+        cbBlock.setName(prefix + "Block");
+        cbBlock.addActionListener(new FaceListener());
+
+        JCheckBox cbWild = new JCheckBox("Wild", true);
+        cbWild.setName(prefix + "Wild");
+        cbWild.addActionListener(new FaceListener());
+        JCheckBox cbBlank = new JCheckBox("Blank");
+        cbBlank.setName(prefix + "Blank");
+        cbBlank.addActionListener(new FaceListener());
+        JCheckBox cbCrit = new JCheckBox("Crit", true);
+        cbCrit.setName(prefix + "Crit");
+        cbCrit.addActionListener(new FaceListener());
+        JCheckBox cbFail = new JCheckBox("Fail");
+        cbFail.setName(prefix + "Fail");
+        cbFail.addActionListener(new FaceListener());
+
+        panel.add(cbHit);
+        panel.add(cbBlock);
+        panel.add(cbWild);
+        panel.add(cbBlank);
+        panel.add(cbCrit);
+        panel.add(cbFail);
 
         return panel;
     }
@@ -124,5 +182,19 @@ public class Gui {
         modify.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         modify.pack();
         modify.setVisible(true);
+    }
+
+    public static class FaceListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String name = ((JCheckBox) e.getSource()).getName();
+            String prefix = name.substring(0, 3);
+            String faceName = name.substring(3);
+            if (Objects.equals(prefix, "atk")) {
+                Runner.updateAtkDie(faceName);
+            } else if (Objects.equals(prefix, "def")) {
+                Runner.updateDefDie(faceName);
+            }
+        }
     }
  }

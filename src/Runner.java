@@ -23,18 +23,33 @@ public class Runner {
         gui.showGui();
     }
 
+    public static void updateAtkDie(String faceName) {
+        atkDie.toggleSuccessfulFace(faceName);
+        updateResults();
+    }
+
+    public static void updateDefDie(String faceName) {
+        defDie.toggleSuccessfulFace(faceName);
+        updateResults();
+    }
+
     private static int getSelectedNum(ActionEvent e) {
         JComboBox<Integer> input = (JComboBox<Integer>) e.getSource();
         return (int) input.getSelectedItem();
     }
 
+    private static void updateResults() {
+        double[] results = ProbabilityCalculator.cumulativeDmgProbabilities(atkDie, defDie,
+                numAtkDice, numDefDice);
+        gui.displayResults(results);
+    }
+
+    // TODO: Consider moving these to Gui class
     public static class AtkListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             numAtkDice = getSelectedNum(e);
-            double[] results = ProbabilityCalculator.cumulativeDmgProbabilities(atkDie, defDie,
-                    numAtkDice, numDefDice);
-            gui.displayResults(results);
+            updateResults();
         }
     }
 
@@ -42,16 +57,7 @@ public class Runner {
         @Override
         public void actionPerformed(ActionEvent e) {
             numDefDice = getSelectedNum(e);
-            double[] results = ProbabilityCalculator.cumulativeDmgProbabilities(atkDie, defDie,
-                    numAtkDice, numDefDice);
-            gui.displayResults(results);
-        }
-    }
-
-    public static class ModifyDiceListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            gui.createModifyDiceWindow();
+            updateResults();
         }
     }
 }
