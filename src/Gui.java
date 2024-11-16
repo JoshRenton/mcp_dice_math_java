@@ -43,31 +43,37 @@ public class Gui {
         JPanel atkAdditionalRulesPanel = createAdditionalRulesPanel("atk");
         JPanel defAdditionalRulesPanel = createAdditionalRulesPanel("def");
 
-        JPanel leftPanel = new JPanel();
-        BoxLayout blLeft = new BoxLayout(leftPanel, BoxLayout.Y_AXIS);
-        leftPanel.setLayout(blLeft);
-        leftPanel.add(atkPanel);
-        leftPanel.add(atkFacePanel);
-        leftPanel.add(atkAdditionalRulesPanel);
+        JPanel leftPanel = createSidePanel(atkPanel, atkFacePanel, atkAdditionalRulesPanel);
 
-        JPanel rightPanel = new JPanel();
-        BoxLayout blRight = new BoxLayout(rightPanel, BoxLayout.Y_AXIS);
-        rightPanel.setLayout(blRight);
-        rightPanel.add(defPanel);
-        rightPanel.add(defFacePanel);
-        rightPanel.add(defAdditionalRulesPanel);
+        JPanel rightPanel = createSidePanel(defPanel, defFacePanel, defAdditionalRulesPanel);
 
         addComponentToLayout(leftPanel, guiFrame, gbl, gbc, 0, 0, 1, 1);
         addComponentToLayout(rightPanel, guiFrame, gbl, gbc, 2, 0, 1, 1);
 
+        JScrollPane resultsPane = createResultsPane();
+        addComponentToLayout(resultsPane, guiFrame, gbl, gbc, 1, 0, 1, 2);
+
+        guiFrame.pack();
+    }
+
+    private JPanel createSidePanel(JPanel numPanel, JPanel facePanel, JPanel rulesPanel) {
+        JPanel panel = new JPanel();
+        BoxLayout bl = new BoxLayout(panel, BoxLayout.Y_AXIS);
+        panel.setLayout(bl);
+        panel.add(numPanel);
+        panel.add(facePanel);
+        panel.add(rulesPanel);
+
+        return panel;
+    }
+
+    private JScrollPane createResultsPane() {
         String[] headers = new String[]{"Number of Hits", "Percent Chance"};
         DefaultTableModel model = new DefaultTableModel(headers, 2);
         outputTable = new JTable(model);
         outputTable.setDefaultEditor(Object.class, null);
-        JScrollPane pane = new JScrollPane(outputTable);
-        addComponentToLayout(pane, guiFrame, gbl, gbc, 1, 0, 1, 2);
 
-        guiFrame.pack();
+        return new JScrollPane(outputTable);
     }
 
     private JPanel createDiceOptionPanel(Integer[] diceNumbers, ActionListener listener, String diceSide,
