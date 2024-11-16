@@ -40,17 +40,22 @@ public class Gui {
         JPanel atkFacePanel = createDiceFaceOptionsPanel("atk");
         JPanel defFacePanel = createDiceFaceOptionsPanel("def");
 
+        JPanel atkAdditionalRulesPanel = createAdditionalRulesPanel("atk");
+        JPanel defAdditionalRulesPanel = createAdditionalRulesPanel("def");
+
         JPanel leftPanel = new JPanel();
         BoxLayout blLeft = new BoxLayout(leftPanel, BoxLayout.Y_AXIS);
         leftPanel.setLayout(blLeft);
         leftPanel.add(atkPanel);
         leftPanel.add(atkFacePanel);
+        leftPanel.add(atkAdditionalRulesPanel);
 
         JPanel rightPanel = new JPanel();
         BoxLayout blRight = new BoxLayout(rightPanel, BoxLayout.Y_AXIS);
         rightPanel.setLayout(blRight);
         rightPanel.add(defPanel);
         rightPanel.add(defFacePanel);
+        rightPanel.add(defAdditionalRulesPanel);
 
         addComponentToLayout(leftPanel, guiFrame, gbl, gbc, 0, 0, 1, 1);
         addComponentToLayout(rightPanel, guiFrame, gbl, gbc, 2, 0, 1, 1);
@@ -140,6 +145,21 @@ public class Gui {
         return panel;
     }
 
+    private JPanel createAdditionalRulesPanel(String prefix) {
+        JPanel panel = new JPanel();
+
+        BoxLayout bl = new BoxLayout(panel, BoxLayout.Y_AXIS);
+        panel.setLayout(bl);
+
+        JCheckBox checkBox = new JCheckBox("Crits Explode", true);
+        checkBox.addActionListener(new CritsExplodeListener());
+        checkBox.setName(prefix);
+
+        panel.add(checkBox);
+
+        return panel;
+    }
+
     public void showGui() {
         guiFrame.setVisible(true);
     }
@@ -190,6 +210,18 @@ public class Gui {
                 Runner.updateAtkDie(faceName);
             } else if (Objects.equals(prefix, "def")) {
                 Runner.updateDefDie(faceName);
+            }
+        }
+    }
+
+    public static class CritsExplodeListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String name = ((JCheckBox) e.getSource()).getName();
+            if (Objects.equals(name, "atk")) {
+                Runner.toggleCritsExplodeAtk();
+            } else if (Objects.equals(name, "def")) {
+                Runner.toggleCritsExplodeDef();
             }
         }
     }

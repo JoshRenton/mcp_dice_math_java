@@ -11,6 +11,8 @@ public class Runner {
     private static int numDefDice;
     private static Die atkDie;
     private static Die defDie;
+    private static boolean critsExplodeAtk;
+    private static boolean critsExplodeDef;
     private static Gui gui;
     public static void main(String[] args) {
         atkDie = new Die.DieBuilder().defaultAttackDie().build();
@@ -18,6 +20,9 @@ public class Runner {
 
         numAtkDice = 0;
         numDefDice = 0;
+
+        critsExplodeAtk = true;
+        critsExplodeDef = true;
 
         gui = new Gui();
         gui.showGui();
@@ -33,6 +38,16 @@ public class Runner {
         updateResults();
     }
 
+    public static void toggleCritsExplodeAtk() {
+        critsExplodeAtk = !critsExplodeAtk;
+        updateResults();
+    }
+
+    public static void toggleCritsExplodeDef() {
+        critsExplodeDef = !critsExplodeDef;
+        updateResults();
+    }
+
     private static int getSelectedNum(ActionEvent e) {
         JComboBox<Integer> input = (JComboBox<Integer>) e.getSource();
         return (int) input.getSelectedItem();
@@ -40,7 +55,7 @@ public class Runner {
 
     private static void updateResults() {
         double[] results = ProbabilityCalculator.cumulativeDmgProbabilities(atkDie, defDie,
-                numAtkDice, numDefDice);
+                numAtkDice, numDefDice, critsExplodeAtk, critsExplodeDef);
         gui.displayResults(results);
     }
 

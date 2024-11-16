@@ -4,9 +4,10 @@ import Dice.Die;
 public final class ProbabilityCalculator {
     private ProbabilityCalculator() {};
 
-    public static double[] cumulativeDmgProbabilities(Die atkDie, Die defDie, int numAtkDice, int numDefDice) {
-        double[] atkProba = successProbabilities(atkDie, numAtkDice);
-        double[] defProba = successProbabilities(defDie, numDefDice);
+    public static double[] cumulativeDmgProbabilities(Die atkDie, Die defDie, int numAtkDice, int numDefDice,
+                                                      boolean critsExplodeAtk, boolean critsExplodeDef) {
+        double[] atkProba = successProbabilities(atkDie, numAtkDice, critsExplodeAtk);
+        double[] defProba = successProbabilities(defDie, numDefDice, critsExplodeDef);
         double[] dmgProba = dmgProbabilities(atkProba, defProba);
         double[] gtProba = greaterThanProbabilities(dmgProba);
         gtProba[0] = dmgProba[0];
@@ -54,17 +55,27 @@ public final class ProbabilityCalculator {
         return cumulativeProbabilities(probabilities, false);
     }
 
-    private static double[] successProbabilities(Die die, int n) {
-        double[] probabilities = new double[2 * n + 1];
+    private static double[] successProbabilities(Die die, int n, boolean critsExplode) {
+        double[] probabilities;
+
+        if (critsExplode) {
+            probabilities = new double[2 * n + 1];
+        } else {
+            probabilities = new double[n + 1];
+        }
 
         for (int k = 0; k <= n; k++) {
             double initial = probabilityOfKSuccessesRollingNDice(die, n, k);
-            for (int r = 0; r <= k; r++) {
-                double crit = probabilityOfRCritsGivenKSuccesses(die, k, r);
-                for (int q = 0; q <= r; q++) {
-                    double critSuccess = probabilityOfKSuccessesRollingNDice(die, r, q);
-                    probabilities[k + q] += initial * crit * critSuccess;
+            if (critsExplode) {
+                for (int r = 0; r <= k; r++) {
+                    double crit = probabilityOfRCritsGivenKSuccesses(die, k, r);
+                    for (int q = 0; q <= r; q++) {
+                        double critSuccess = probabilityOfKSuccessesRollingNDice(die, r, q);
+                        probabilities[k + q] += initial * crit * critSuccess;
+                    }
                 }
+            } else {
+                probabilities[k] = initial;
             }
         }
 
