@@ -117,12 +117,15 @@ public class Gui {
         JCheckBox cbWild = new JCheckBox("Wild", true);
         cbWild.setName(prefix + "Wild");
         cbWild.addActionListener(new FaceListener());
+
         JCheckBox cbBlank = new JCheckBox("Blank");
         cbBlank.setName(prefix + "Blank");
         cbBlank.addActionListener(new FaceListener());
+
         JCheckBox cbCrit = new JCheckBox("Crit", true);
         cbCrit.setName(prefix + "Crit");
         cbCrit.addActionListener(new FaceListener());
+
         JCheckBox cbFail = new JCheckBox("Fail");
         cbFail.setName(prefix + "Fail");
         cbFail.addActionListener(new FaceListener());
@@ -175,13 +178,6 @@ public class Gui {
 
         gbl.setConstraints(component, gbc);
         container.add(component);
-    }
-
-    public void createModifyDiceWindow() {
-        JFrame modify = new JFrame("Modify Dice");
-        modify.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        modify.pack();
-        modify.setVisible(true);
     }
 
     public static class FaceListener implements ActionListener {
