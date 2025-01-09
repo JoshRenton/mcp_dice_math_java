@@ -61,6 +61,7 @@ public class Gui {
         BoxLayout bl = new BoxLayout(panel, BoxLayout.Y_AXIS);
         panel.setLayout(bl);
         panel.add(numPanel);
+
         panel.add(facePanel);
         panel.add(rulesPanel);
 
@@ -68,7 +69,7 @@ public class Gui {
     }
 
     private JScrollPane createResultsPane() {
-        String[] headers = new String[]{"Number of Hits", "Percent Chance"};
+        String[] headers = new String[]{"Damage", "Percent Chance"};
         DefaultTableModel model = new DefaultTableModel(headers, 2);
         outputTable = new JTable(model);
         outputTable.setDefaultEditor(Object.class, null);
